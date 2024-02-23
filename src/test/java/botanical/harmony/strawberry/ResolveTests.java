@@ -17,6 +17,16 @@ public class ResolveTests {
 
     assertTrue(result.isPresent());
   }
+
+  @Test
+  void no_result_when_resolving_unregistered_type() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    Container container = builder.build();
+
+    Optional<SimpleTestType> result = container.resolve(SimpleTestType.class);
+
+    assertTrue(result.isEmpty());
+  }
 }
 
 class SimpleTestType {
