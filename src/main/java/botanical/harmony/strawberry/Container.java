@@ -1,5 +1,6 @@
 package botanical.harmony.strawberry;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,34 +32,49 @@ public class Container {
         return createInstance(resolvableConstructor.get());
 
     } catch (Exception ex) {
+
     }
     return Optional.empty();
   }
 
-  private <T> T createInstance(Constructor<?> resolvableConstructor) throws Exception {
+  private <T> Optional<T> createInstance(Constructor<?> resolvableConstructor) {
     Parameter[] parameters = resolvableConstructor.getParameters();
     List<Object> parameterInstances = new ArrayList<>();
 
     for (Parameter parameter : parameters) {
-      Object instance = resolve(parameter.getClass());
-      parameterInstances.add(instance);
+      Optional<?> optionalInstance = resolve(parameter.getType());
+      if (optionalInstance.isPresent()) {
+        Object instance = optionalInstance.get();
+        parameterInstances.add(instance);
+      }
+    }
+    try {
+      return Optional.of(((T)resolvableConstructor.newInstance(parameterInstances.toArray())));
+    }
+    catch(InstantiationException | IllegalAccessException | InvocationTargetException ex){
+      System.err.println(ex.toString());
     }
 
-    return (T) resolvableConstructor.newInstance(parameterInstances.toArray());
+      return Optional.empty();
   }
 
   private Optional<Constructor<?>> getResolvableConstructor(Constructor<?>[] constructors) {
     for (Constructor<?> constructor : constructors) {
+      boolean valid = true;
       for (Parameter parameter : constructor.getParameters()) {
-        if (!registeredTypes.contains(parameter.getClass()))
-          continue;
+        if (!registeredTypes.contains(parameter.getType())) {
+          valid = false;
+          break;
+        }
+        ;
       }
-      return Optional.of(constructor);
+      if (valid)
+        return Optional.of(constructor);
     }
     return Optional.empty();
   }
 
-  private <T> Optional<Constructor<?>> getDefaultConstructor(Constructor<T>[] constructors) {
+  private <T> Optional<Constructor<?>> getDefaultConstructor(Constructor<?>[] constructors) {
     for (Constructor<?> constructor : constructors) {
       if (constructor.getParameters().length == 0)
         return Optional.of(constructor);
