@@ -28,6 +28,29 @@ public class ResolveTests {
 
     assertTrue(result.isEmpty());
   }
+
+  @Test
+  void no_result_when_resolving_type_where_dependency_not_registered() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    builder.register(TestTypeWithDependencies.class);
+    Container container = builder.build();
+
+    Optional result = container.resolve(TestTypeWithDependencies.class);
+
+    assertTrue(result.isEmpty());
+  }
+}
+
+class TestTypeWithDependencies {
+  public TestTypeWithDependencies(SimpleTestType simple, AnotherTestTypeWithDependencies another) {
+    super();
+  }
+}
+
+class AnotherTestTypeWithDependencies {
+  public AnotherTestTypeWithDependencies(SimpleTestType simple) {
+    super();
+  }
 }
 
 class SimpleTestType {
