@@ -1,5 +1,6 @@
 package botanical.harmony.strawberry;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
@@ -51,7 +52,7 @@ public class ResolveTests {
     Optional<TestTypeWithDependencies> result = container.resolve(TestTypeWithDependencies.class);
 
     assertTrue(result.isPresent());
-    assertTrue(result.get().getClass() == TestTypeWithDependencies.class);
+    assertSame(result.get().getClass(), TestTypeWithDependencies.class);
   }
 }
 
