@@ -17,7 +17,7 @@ public class ResolveTests {
     Optional<SimpleTestType> result = container.resolve(SimpleTestType.class);
 
     assertTrue(result.isPresent());
-    assertTrue(result.get().getClass() == SimpleTestType.class);
+    assertSame(result.get().getClass(), SimpleTestType.class);
   }
 
   @Test
