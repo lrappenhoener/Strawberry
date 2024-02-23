@@ -35,9 +35,23 @@ public class ResolveTests {
     builder.register(TestTypeWithDependencies.class);
     Container container = builder.build();
 
-    Optional result = container.resolve(TestTypeWithDependencies.class);
+    Optional<TestTypeWithDependencies> result = container.resolve(TestTypeWithDependencies.class);
 
     assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void resolve_type_with_dependencies() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    builder.register(TestTypeWithDependencies.class);
+    builder.register(AnotherTestTypeWithDependencies.class);
+    builder.register(SimpleTestType.class);
+    Container container = builder.build();
+
+    Optional<TestTypeWithDependencies> result = container.resolve(TestTypeWithDependencies.class);
+
+    assertTrue(result.isPresent());
+    assertTrue(result.get().getClass() == TestTypeWithDependencies.class);
   }
 }
 
