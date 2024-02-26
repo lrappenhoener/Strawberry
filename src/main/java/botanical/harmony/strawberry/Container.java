@@ -30,11 +30,11 @@ public class Container {
     Constructor<?>[] constructors = clazz.getDeclaredConstructors();
 
     return Arrays.stream(constructors)
-            .filter(constructor -> parametersResolvable(constructor.getParameters()))
+            .filter(constructor -> resolvableDependencies(constructor.getParameters()))
             .findFirst();
   }
 
-  private boolean parametersResolvable(Parameter[] parameters) {
+  private boolean resolvableDependencies(Parameter[] parameters) {
     return parameters.length == 0 ||
             Arrays.stream(parameters)
                     .allMatch(p -> registeredTypes.contains(p.getType()));
@@ -43,14 +43,14 @@ public class Container {
   @SuppressWarnings("unchecked")
   private <T> Optional<T> createInstance(Constructor<?> constructor) {
     try {
-      Object[] parameterInstances = createParameterInstances(constructor.getParameters());
-      return Optional.of((T)constructor.newInstance(parameterInstances));
+      Object[] dependencies = createDependencies(constructor.getParameters());
+      return Optional.of((T)constructor.newInstance(dependencies));
     } catch (ClassCastException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
       return Optional.empty();
     }
   }
 
-  private Object[] createParameterInstances(Parameter[] parameters) throws InstantiationException {
+  private Object[] createDependencies(Parameter[] parameters) throws InstantiationException {
     List<Object> list = new ArrayList<>();
     for (Parameter p : parameters) {
       Optional<?> o = resolve(p.getType());
