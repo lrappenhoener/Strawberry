@@ -1,12 +1,12 @@
 package botanical.harmony.strawberry;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Parameter;
 
 public class Container {
 
@@ -20,66 +20,43 @@ public class Container {
     if (!registeredTypes.contains(clazz))
       return Optional.empty();
 
-    try {
-      Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-
-      Optional<Constructor<?>> defaultConstructor = getDefaultConstructor(constructors);
-      if (defaultConstructor.isPresent())
-        return Optional.of((T) defaultConstructor.get().newInstance());
-
-      Optional<Constructor<?>> resolvableConstructor = getResolvableConstructor(constructors);
-      if (resolvableConstructor.isPresent())
-        return createInstance(resolvableConstructor.get());
-
-    } catch (Exception ex) {
-
-    }
-    return Optional.empty();
+    Optional<Constructor<?>> constructor = getConstructor(clazz);
+    return constructor.isPresent() ?
+            createInstance(constructor.get()) :
+            Optional.empty();
   }
 
-  private <T> Optional<T> createInstance(Constructor<?> resolvableConstructor) {
-    Parameter[] parameters = resolvableConstructor.getParameters();
-    List<Object> parameterInstances = new ArrayList<>();
+  private <T> Optional<Constructor<?>> getConstructor(Class<T> clazz) {
+    Constructor<?>[] constructors = clazz.getDeclaredConstructors();
 
-    for (Parameter parameter : parameters) {
-      Optional<?> optionalInstance = resolve(parameter.getType());
-      if (optionalInstance.isPresent()) {
-        Object instance = optionalInstance.get();
-        parameterInstances.add(instance);
-      }
-    }
+    return Arrays.stream(constructors)
+            .filter(constructor -> parametersResolvable(constructor.getParameters()))
+            .findFirst();
+  }
+
+  private boolean parametersResolvable(Parameter[] parameters) {
+    return parameters.length == 0 ||
+            Arrays.stream(parameters)
+                    .allMatch(p -> registeredTypes.contains(p.getType()));
+  }
+
+  @SuppressWarnings("unchecked")
+  private <T> Optional<T> createInstance(Constructor<?> constructor) {
     try {
-      return Optional.of(((T)resolvableConstructor.newInstance(parameterInstances.toArray())));
-    }
-    catch(InstantiationException | IllegalAccessException | InvocationTargetException ex){
-      System.err.println(ex.toString());
-    }
-
+      Object[] parameterInstances = createParameterInstances(constructor.getParameters());
+      return Optional.of((T)constructor.newInstance(parameterInstances));
+    } catch (ClassCastException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
       return Optional.empty();
-  }
-
-  private Optional<Constructor<?>> getResolvableConstructor(Constructor<?>[] constructors) {
-    for (Constructor<?> constructor : constructors) {
-      boolean valid = true;
-      for (Parameter parameter : constructor.getParameters()) {
-        if (!registeredTypes.contains(parameter.getType())) {
-          valid = false;
-          break;
-        }
-        ;
-      }
-      if (valid)
-        return Optional.of(constructor);
     }
-    return Optional.empty();
   }
 
-  private <T> Optional<Constructor<?>> getDefaultConstructor(Constructor<?>[] constructors) {
-    for (Constructor<?> constructor : constructors) {
-      if (constructor.getParameters().length == 0)
-        return Optional.of(constructor);
+  private Object[] createParameterInstances(Parameter[] parameters) throws InstantiationException {
+    List<Object> list = new ArrayList<>();
+    for (Parameter p : parameters) {
+      Optional<?> o = resolve(p.getType());
+      if (o.isEmpty()) throw new InstantiationException();
+      list.add(o.get());
     }
-    return Optional.empty();
+    return list.toArray();
   }
-
 }
