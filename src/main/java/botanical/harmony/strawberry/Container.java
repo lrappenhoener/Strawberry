@@ -10,7 +10,7 @@ import java.lang.reflect.Parameter;
 
 public class Container {
 
-  private List<Class<?>> registeredTypes;
+  private final List<Class<?>> registeredTypes;
 
   public Container(List<Class<?>> registeredTypes) {
     this.registeredTypes = registeredTypes;
