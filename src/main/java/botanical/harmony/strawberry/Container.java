@@ -16,12 +16,12 @@ public class Container {
     this.registeredTypes = registeredTypes;
   }
 
-  public <T> Optional<T> resolve(Class<T> class1) {
-    if (!registeredTypes.contains(class1))
+  public <T> Optional<T> resolve(Class<T> clazz) {
+    if (!registeredTypes.contains(clazz))
       return Optional.empty();
 
     try {
-      Constructor<?>[] constructors = class1.getDeclaredConstructors();
+      Constructor<?>[] constructors = clazz.getDeclaredConstructors();
 
       Optional<Constructor<?>> defaultConstructor = getDefaultConstructor(constructors);
       if (defaultConstructor.isPresent())
