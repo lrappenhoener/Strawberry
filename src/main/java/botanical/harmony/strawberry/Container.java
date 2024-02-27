@@ -23,12 +23,17 @@ public class Container {
   }
 
   private <T> Optional<T> resolveByFactory(Class<T> clazz) {
+    Optional<Function<Container, ?>> optionalFactory = getOptionalFactory(clazz);
+    return optionalFactory.flatMap(this::createInstanceByFactory);
+  }
+
+  private Optional<Function<Container, ?>> getOptionalFactory(Class<?> clazz) {
     if (!registeredTypeFactories.containsKey(clazz))
-      return Optional.empty();
-    Optional<Function<Container, ?>> optionalFactory = registeredTypeFactories.get(clazz).stream().findFirst();
-    if (optionalFactory.isEmpty())
-      return Optional.empty();
-    Function<Container, ?> factory = optionalFactory.get();
+          return Optional.empty();
+    return registeredTypeFactories.get(clazz).stream().findFirst();
+  }
+
+  private <T> Optional<T> createInstanceByFactory(Function<Container, ?> factory) {
     Object instance = factory.apply(this);
     return Optional.of((T)instance);
   }
