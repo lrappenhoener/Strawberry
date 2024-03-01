@@ -2,10 +2,7 @@ package botanical.harmony.strawberry;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,6 +23,8 @@ public class Registrations {
   }
 
   private ValidationResult validateRegistration(Registration<?> registration) {
+    if (hasCyclicDependency(registration)) throw new BadRegistrationException(ValidationResult.Failed("Cyclic Dependency"));
+
     if (registration.getOptionalFactory().isPresent()) {
       Function<Container, ?> factory = registration.getOptionalFactory().get();
       return validateFactory(factory);
@@ -40,6 +39,21 @@ public class Registrations {
     if (validConstructor.isEmpty()) return ValidationResult.Failed("No resolvable constructor found");
     registration.setConstructor(validConstructor.get());
     return ValidationResult.Success();
+  }
+
+  private boolean hasCyclicDependency(Registration<?> registration) {
+    Class<?> clazz = registration.getClazz();
+    return hasCyclicDependency(clazz, clazz);
+  }
+
+  private boolean hasCyclicDependency(Class<?> current, Class<?> original) {
+    for (Constructor<?> constructor : current.getDeclaredConstructors()) {
+      for (Parameter parameter : constructor.getParameters()) {
+        if (parameter.getType() == original ||
+            hasCyclicDependency(parameter.getType(), original)) return true;
+      }
+    }
+    return false;
   }
 
   private ValidationResult validateFactory(Function<Container, ?> factory) {
