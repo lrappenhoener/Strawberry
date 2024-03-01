@@ -23,6 +23,16 @@ public class ContainerBuilder {
     return this;
   }
 
+  public <T> ContainerBuilder registerSingleton(Class<T> clazz) {
+    register(clazz, Optional.empty(), Optional.empty(), LifeTime.Singleton);
+    return this;
+  }
+
+  public <T> ContainerBuilder registerSingleton(Class<T> clazz, Function<Container, T> factory) {
+    register(clazz, Optional.of(factory), Optional.empty(), LifeTime.Singleton);
+    return this;
+  }
+
   private <T> void register(Class<T> clazz, Optional<Function<Container, T>> factory, Optional<Constructor<T>> constructor, LifeTime lifeTime) {
     Registration<T> registration = new Registration<T>(clazz, factory, constructor, lifeTime);
     registrations.add(registration);
@@ -34,5 +44,4 @@ public class ContainerBuilder {
     Resolvers resolvers = registrations.build();
     return new Container(resolvers);
   }
-
 }

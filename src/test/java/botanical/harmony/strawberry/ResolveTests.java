@@ -1,6 +1,9 @@
 package botanical.harmony.strawberry;
 
-import botanical.harmony.strawberry.helpers.*;
+import botanical.harmony.strawberry.helpers.AnotherTestTypeWithDependencies;
+import botanical.harmony.strawberry.helpers.SimpleTestType;
+import botanical.harmony.strawberry.helpers.TestTypeForFactory;
+import botanical.harmony.strawberry.helpers.TestTypeWithDependencies;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -60,6 +63,30 @@ public class ResolveTests {
 
     assertNotNull(result);
     assertSame(result.getClass(), TestTypeForFactory.class);
+  }
+
+  @Test
+  void resolve_singleton() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    builder.registerSingleton(SimpleTestType.class);
+    Container container = builder.build();
+
+    SimpleTestType a = container.resolve(SimpleTestType.class);
+    SimpleTestType b = container.resolve(SimpleTestType.class);
+
+    assertEquals(a, b);
+  }
+
+  @Test
+  void resolve_singleton_by_factory() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    builder.registerSingleton(SimpleTestType.class, c -> new SimpleTestType());
+    Container container = builder.build();
+
+    SimpleTestType a = container.resolve(SimpleTestType.class);
+    SimpleTestType b = container.resolve(SimpleTestType.class);
+
+    assertEquals(a, b);
   }
 
   private static ContainerBuilder getContainerBuilder() {
