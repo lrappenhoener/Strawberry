@@ -1,8 +1,6 @@
 package botanical.harmony.strawberry;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 public class Resolvers {
   private final Map<Class<?>, Resolver> resolvers;
