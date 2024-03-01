@@ -1,11 +1,10 @@
 package botanical.harmony.strawberry;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ResolveTests {
   @Test
@@ -14,31 +13,26 @@ public class ResolveTests {
     builder.register(SimpleTestType.class);
     Container container = builder.build();
 
-    Optional<SimpleTestType> result = container.resolve(SimpleTestType.class);
+    SimpleTestType result = container.resolve(SimpleTestType.class);
 
-    assertTrue(result.isPresent());
-    assertSame(result.get().getClass(), SimpleTestType.class);
+    assertNotNull(result);
+    assertSame(result.getClass(), SimpleTestType.class);
   }
 
   @Test
-  void no_result_when_resolving_unregistered_type() {
+  void throws_bad_request_exception_when_resolving_unregistered_type() {
     ContainerBuilder builder = ContainerBuilder.create();
     Container container = builder.build();
 
-    Optional<SimpleTestType> result = container.resolve(SimpleTestType.class);
-
-    assertTrue(result.isEmpty());
+    assertThrows(BadRequestException.class, () -> container.resolve(SimpleTestType.class));
   }
 
   @Test
-  void no_result_when_resolving_type_where_dependency_not_registered() {
+  void throws_bad_registration_exception_when_trying_build_container_where_type_not_resolvable() {
     ContainerBuilder builder = ContainerBuilder.create();
     builder.register(TestTypeWithDependencies.class);
-    Container container = builder.build();
 
-    Optional<TestTypeWithDependencies> result = container.resolve(TestTypeWithDependencies.class);
-
-    assertTrue(result.isEmpty());
+    assertThrows(BadRegistrationException.class, builder::build);
   }
 
   @Test
@@ -46,26 +40,27 @@ public class ResolveTests {
     ContainerBuilder builder = getContainerBuilder();
     Container container = builder.build();
 
-    Optional<TestTypeWithDependencies> result = container.resolve(TestTypeWithDependencies.class);
+    TestTypeWithDependencies result = container.resolve(TestTypeWithDependencies.class);
 
-    assertTrue(result.isPresent());
-    assertSame(result.get().getClass(), TestTypeWithDependencies.class);
+    assertNotNull(result);
+    assertSame(result.getClass(), TestTypeWithDependencies.class);
   }
 
   @Test
   void resolve_type_with_dependencies_by_factory() {
     ContainerBuilder builder = getContainerBuilder();
     builder.register(TestTypeForFactory.class, (c) -> {
-      Optional<AnotherTestTypeWithDependencies> dependencyA = c.resolve(AnotherTestTypeWithDependencies.class);
-      Optional<SimpleTestType> dependencyB = c.resolve(SimpleTestType.class);
-      Optional<TestTypeWithDependencies> dependencyC = c.resolve(TestTypeWithDependencies.class);
-      return new TestTypeForFactory(dependencyA.get(), dependencyB.get(), dependencyC.get());
+      AnotherTestTypeWithDependencies dependencyA = c.resolve(AnotherTestTypeWithDependencies.class);
+      SimpleTestType dependencyB = c.resolve(SimpleTestType.class);
+      TestTypeWithDependencies dependencyC = c.resolve(TestTypeWithDependencies.class);
+      return new TestTypeForFactory(dependencyA, dependencyB, dependencyC);
     });
     Container container = builder.build();
 
-    Optional<TestTypeForFactory> result = container.resolve(TestTypeForFactory.class);
+    TestTypeForFactory result = container.resolve(TestTypeForFactory.class);
 
-    assertTrue(result.isPresent());
+    assertNotNull(result);
+    assertSame(result.getClass(), TestTypeForFactory.class);
   }
 
   private static ContainerBuilder getContainerBuilder() {
