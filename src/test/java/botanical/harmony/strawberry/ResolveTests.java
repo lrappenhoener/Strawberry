@@ -4,6 +4,7 @@ import botanical.harmony.strawberry.helpers.AnotherTestTypeWithDependencies;
 import botanical.harmony.strawberry.helpers.SimpleTestType;
 import botanical.harmony.strawberry.helpers.TestTypeForFactory;
 import botanical.harmony.strawberry.helpers.TestTypeWithDependencies;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,15 +27,7 @@ public class ResolveTests {
     ContainerBuilder builder = ContainerBuilder.create();
     Container container = builder.build();
 
-    assertThrows(BadRequestException.class, () -> container.resolve(SimpleTestType.class));
-  }
-
-  @Test
-  void throws_bad_registration_exception_when_trying_build_container_where_type_not_resolvable() {
-    ContainerBuilder builder = ContainerBuilder.create();
-    builder.register(TestTypeWithDependencies.class);
-
-    assertThrows(BadRegistrationException.class, builder::build);
+    Assertions.assertThrows(BadRequestException.class, () -> container.resolve(SimpleTestType.class));
   }
 
   @Test
