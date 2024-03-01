@@ -1,7 +1,6 @@
 package botanical.harmony.strawberry;
 
-import java.util.Optional;
-
+import botanical.harmony.strawberry.helpers.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -72,30 +71,3 @@ public class ResolveTests {
   }
 }
 
-class TestTypeForFactory {
-  private final AnotherTestTypeWithDependencies dependencyA;
-  private final SimpleTestType dependencyB;
-  private final TestTypeWithDependencies dependencyC;
-
-  public TestTypeForFactory(AnotherTestTypeWithDependencies dependencyA, SimpleTestType dependencyB, TestTypeWithDependencies dependencyC) {
-    this.dependencyA = dependencyA;
-    this.dependencyB = dependencyB;
-    this.dependencyC = dependencyC;
-  }
-}
-
-class TestTypeWithDependencies {
-  public TestTypeWithDependencies(SimpleTestType simple, AnotherTestTypeWithDependencies another) {
-    super();
-  }
-}
-
-class AnotherTestTypeWithDependencies {
-  public AnotherTestTypeWithDependencies(SimpleTestType simple) {
-    super();
-  }
-}
-
-class SimpleTestType {
-
-}
