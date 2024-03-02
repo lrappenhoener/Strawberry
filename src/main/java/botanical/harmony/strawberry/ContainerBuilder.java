@@ -1,11 +1,5 @@
 package botanical.harmony.strawberry;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-
 public class ContainerBuilder {
   private final Registrations registrations = new Registrations();
 

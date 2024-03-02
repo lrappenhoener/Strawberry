@@ -1,9 +1,6 @@
 package botanical.harmony.strawberry;
 
-import botanical.harmony.strawberry.helpers.AnotherTestTypeWithDependencies;
-import botanical.harmony.strawberry.helpers.SimpleTestType;
-import botanical.harmony.strawberry.helpers.TestTypeForFactory;
-import botanical.harmony.strawberry.helpers.TestTypeWithDependencies;
+import botanical.harmony.strawberry.helpers.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -84,6 +81,18 @@ public class ResolveTests {
     SimpleTestType b = container.resolve(SimpleTestType.class);
 
     assertEquals(a, b);
+  }
+
+  @Test
+  void resolve_by_interface() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    builder.register(SimpleTestType.class).as(SomeTestInterface.class);
+    Container container = builder.build();
+
+    SomeTestInterface result = container.resolve(SomeTestInterface.class);
+
+    assertNotNull(result);
+    assertEquals(result.getClass(), SimpleTestType.class);
   }
 
   private static ContainerBuilder getContainerBuilder() {

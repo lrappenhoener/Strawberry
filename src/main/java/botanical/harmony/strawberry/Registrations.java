@@ -92,6 +92,13 @@ public class Registrations {
             .collect(Collectors.toMap(
                     entry -> entry.getKey(),
                     entry -> ResolverBuilder.createFromRegistration(entry.getValue())));
+    for(Registration<?> registration : registrations.values()) {
+      Class<?> clazz = registration.getClazz();
+     for (Class<?> abstraction : registration.getAbstractions()) {
+       Resolver resolver = resolvers.get(clazz);
+       resolvers.put(abstraction, resolver);
+     }
+    }
     return new Resolvers(resolvers);
   }
 }

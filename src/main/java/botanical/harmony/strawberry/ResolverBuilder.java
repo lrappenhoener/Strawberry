@@ -11,13 +11,15 @@ public class ResolverBuilder {
     return new ConstructorResolver(
             registration.getClazz(),
             registration.getOptionalConstructor().get(),
-            registration.getLifeTime());
+            registration.getLifeTime(),
+            registration.getAbstractions());
   }
 
   private static Resolver createFactoryResolver(Registration<?> registration) {
     return new FactoryResolver(
             registration.getClazz(),
             registration.getOptionalFactory().get(),
-            registration.getLifeTime());
+            registration.getLifeTime(),
+            registration.getAbstractions());
   }
 }

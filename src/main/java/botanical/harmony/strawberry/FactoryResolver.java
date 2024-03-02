@@ -1,5 +1,6 @@
 package botanical.harmony.strawberry;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -9,7 +10,7 @@ public class FactoryResolver implements Resolver {
   private final LifeTime lifeTime;
   private Optional<Object> singleton = Optional.empty();
 
-  public FactoryResolver(Class<?> clazz, Function<Container, ?> containerFunction, LifeTime lifeTime) {
+  public FactoryResolver(Class<?> clazz, Function<Container, ?> containerFunction, LifeTime lifeTime, List<Class<?>> abstractions) {
     this.clazz = clazz;
     this.containerFunction = containerFunction;
     this.lifeTime = lifeTime;

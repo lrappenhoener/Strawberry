@@ -1,6 +1,8 @@
 package botanical.harmony.strawberry;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -9,10 +11,10 @@ public class Registration<T> implements RegistrationBuilder<T> {
   private Optional<Function<Container, T>> factory = Optional.empty();
   private Optional<Constructor<T>> constructor = Optional.empty();
   private LifeTime lifeTime;
+  private List<Class<?>> abstractions = new ArrayList<>();
 
   public Registration(Class<T> clazz) {
     this.clazz = clazz;
-    this.lifeTime = LifeTime.Fresh;
   }
 
   @Override
@@ -33,6 +35,12 @@ public class Registration<T> implements RegistrationBuilder<T> {
     return this;
   }
 
+  @Override
+  public RegistrationBuilder<T> as(Class<?> abstraction) {
+    addAbstraction(abstraction);
+    return this;
+  }
+
   Class<T> getClazz() {
     return clazz;
   }
@@ -49,6 +57,10 @@ public class Registration<T> implements RegistrationBuilder<T> {
     return lifeTime;
   }
 
+  List<Class<?>> getAbstractions() {
+    return abstractions;
+  }
+
   private void setFactory(Function<Container, T> factory) {
     this.factory = Optional.of(factory);
   }
@@ -57,7 +69,12 @@ public class Registration<T> implements RegistrationBuilder<T> {
     this.constructor = Optional.of((Constructor<T>) constructor);
   }
 
-  void setLifeTime(LifeTime lifeTime) {
+  private void setLifeTime(LifeTime lifeTime) {
     this.lifeTime = lifeTime;
   }
+
+  private void addAbstraction(Class<?> abstraction) {
+    abstractions.add(abstraction);
+  }
+
 }
