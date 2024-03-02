@@ -44,7 +44,8 @@ public class ResolveTests {
   @Test
   void resolve_type_with_dependencies_by_factory() {
     ContainerBuilder builder = getContainerBuilder();
-    builder.register(TestTypeForFactory.class, (c) -> {
+    builder.register(TestTypeForFactory.class)
+           .withFactory((c) -> {
       AnotherTestTypeWithDependencies dependencyA = c.resolve(AnotherTestTypeWithDependencies.class);
       SimpleTestType dependencyB = c.resolve(SimpleTestType.class);
       TestTypeWithDependencies dependencyC = c.resolve(TestTypeWithDependencies.class);
@@ -61,7 +62,8 @@ public class ResolveTests {
   @Test
   void resolve_singleton() {
     ContainerBuilder builder = ContainerBuilder.create();
-    builder.registerSingleton(SimpleTestType.class);
+    builder.register(SimpleTestType.class)
+           .withLifeTime(LifeTime.Singleton);
     Container container = builder.build();
 
     SimpleTestType a = container.resolve(SimpleTestType.class);
@@ -73,7 +75,9 @@ public class ResolveTests {
   @Test
   void resolve_singleton_by_factory() {
     ContainerBuilder builder = ContainerBuilder.create();
-    builder.registerSingleton(SimpleTestType.class, c -> new SimpleTestType());
+    builder.register(SimpleTestType.class)
+           .withFactory(c -> new SimpleTestType())
+           .withLifeTime(LifeTime.Singleton);
     Container container = builder.build();
 
     SimpleTestType a = container.resolve(SimpleTestType.class);

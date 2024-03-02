@@ -18,10 +18,10 @@ public class BuildTests {
   }
 
   @Test
-  void throws_bad_registration_exception_when_trying_build_container_where_type_has_cyclic_dependency(){
+  void throws_bad_registration_exception_when_trying_build_container_where_type_has_cyclic_dependency() {
     ContainerBuilder builder = ContainerBuilder.create();
-    builder.register(TestTypeCyclicA.class)
-           .register(TestTypeCyclicB.class);
+    builder.register(TestTypeCyclicA.class);
+    builder.register(TestTypeCyclicB.class);
 
     assertThrows(BadRegistrationException.class, builder::build);
   }

@@ -4,36 +4,60 @@ import java.lang.reflect.Constructor;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class Registration<T> {
+public class Registration<T> implements RegistrationBuilder<T> {
   private final Class<T> clazz;
-  private final Optional<Function<Container, T>> factory;
-  private Optional<Constructor<T>> constructor;
-  private final LifeTime lifeTime;
+  private Optional<Function<Container, T>> factory = Optional.empty();
+  private Optional<Constructor<T>> constructor = Optional.empty();
+  private LifeTime lifeTime;
 
-  public Registration(Class<T> clazz, Optional<Function<Container, T>> factory, Optional<Constructor<T>> constructor, LifeTime lifeTime) {
+  public Registration(Class<T> clazz) {
     this.clazz = clazz;
-    this.factory = factory;
-    this.constructor = constructor;
-    this.lifeTime = lifeTime;
+    this.lifeTime = LifeTime.Fresh;
   }
 
-  public Class<T> getClazz() {
+  @Override
+  public RegistrationBuilder<T> withFactory(Function<Container, T> factory) {
+    setFactory(factory);
+    return this;
+  }
+
+  @Override
+  public RegistrationBuilder<T> withConstructor(Constructor<T> constructor) {
+    setConstructor(constructor);
+    return this;
+  }
+
+  @Override
+  public RegistrationBuilder<T> withLifeTime(LifeTime lifeTime) {
+    setLifeTime(lifeTime);
+    return this;
+  }
+
+  Class<T> getClazz() {
     return clazz;
   }
 
-  public Optional<Function<Container, T>> getOptionalFactory() {
+  Optional<Function<Container, T>> getOptionalFactory() {
     return factory;
   }
 
-  public Optional<Constructor<T>> getOptionalConstructor() {
+  Optional<Constructor<T>> getOptionalConstructor() {
     return constructor;
   }
 
-  public void setConstructor(Constructor<?> constructor) {
-    this.constructor = Optional.of((Constructor<T>)constructor);
+  LifeTime getLifeTime() {
+    return lifeTime;
   }
 
-  public LifeTime getLifeTime() {
-    return lifeTime;
+  private void setFactory(Function<Container, T> factory) {
+    this.factory = Optional.of(factory);
+  }
+
+  void setConstructor(Constructor<?> constructor) {
+    this.constructor = Optional.of((Constructor<T>) constructor);
+  }
+
+  void setLifeTime(LifeTime lifeTime) {
+    this.lifeTime = lifeTime;
   }
 }
