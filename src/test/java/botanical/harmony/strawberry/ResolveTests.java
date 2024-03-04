@@ -42,12 +42,12 @@ public class ResolveTests {
   void resolve_type_with_dependencies_by_factory() {
     ContainerBuilder builder = getContainerBuilder();
     builder.register(TestTypeForFactory.class)
-           .withFactory((c) -> {
-      AnotherTestTypeWithDependencies dependencyA = c.resolve(AnotherTestTypeWithDependencies.class);
-      SimpleTestType dependencyB = c.resolve(SimpleTestType.class);
-      TestTypeWithDependencies dependencyC = c.resolve(TestTypeWithDependencies.class);
-      return new TestTypeForFactory(dependencyA, dependencyB, dependencyC);
-    });
+        .withFactory((c) -> {
+          AnotherTestTypeWithDependencies dependencyA = c.resolve(AnotherTestTypeWithDependencies.class);
+          SimpleTestType dependencyB = c.resolve(SimpleTestType.class);
+          TestTypeWithDependencies dependencyC = c.resolve(TestTypeWithDependencies.class);
+          return new TestTypeForFactory(dependencyA, dependencyB, dependencyC);
+        });
     Container container = builder.build();
 
     TestTypeForFactory result = container.resolve(TestTypeForFactory.class);
@@ -60,7 +60,7 @@ public class ResolveTests {
   void resolve_singleton() {
     ContainerBuilder builder = ContainerBuilder.create();
     builder.register(SimpleTestType.class)
-           .withLifeTime(LifeTime.Singleton);
+        .withLifeTime(LifeTime.Singleton);
     Container container = builder.build();
 
     SimpleTestType a = container.resolve(SimpleTestType.class);
@@ -73,8 +73,8 @@ public class ResolveTests {
   void resolve_singleton_by_factory() {
     ContainerBuilder builder = ContainerBuilder.create();
     builder.register(SimpleTestType.class)
-           .withFactory(c -> new SimpleTestType())
-           .withLifeTime(LifeTime.Singleton);
+        .withFactory(c -> new SimpleTestType())
+        .withLifeTime(LifeTime.Singleton);
     Container container = builder.build();
 
     SimpleTestType a = container.resolve(SimpleTestType.class);
@@ -103,4 +103,3 @@ public class ResolveTests {
     return builder;
   }
 }
-
