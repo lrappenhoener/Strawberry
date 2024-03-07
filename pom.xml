@@ -5,7 +5,7 @@
   <groupId>botanical.harmony</groupId>
   <artifactId>strawberry</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
+  <version>0.2</version>
   <name>strawberry</name>
   <url>http://maven.apache.org</url>
   <properties>
