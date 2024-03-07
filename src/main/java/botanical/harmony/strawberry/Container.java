@@ -18,6 +18,6 @@ public class Container {
   }
 
   public boolean canResolve(Class<?> clazz) {
-    return false;
+    return resolvers.canResolve(clazz);
   }
 }
