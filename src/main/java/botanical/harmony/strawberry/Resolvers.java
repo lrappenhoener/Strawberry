@@ -13,4 +13,8 @@ public class Resolvers {
     if (!resolvers.containsKey(clazz)) throw new BadRequestException();
     return (T)resolvers.get(clazz).resolve(container);
   }
+
+  public boolean canResolve(Class<?> clazz) {
+    return resolvers.containsKey(clazz);
+  }
 }
