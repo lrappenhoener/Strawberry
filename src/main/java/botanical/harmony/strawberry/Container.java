@@ -16,4 +16,8 @@ public class Container {
   public <T> T resolve(Class<T> clazz) {
     return resolvers.resolve(this, clazz);
   }
+
+  public boolean canResolve(Class<?> clazz) {
+    return false;
+  }
 }
