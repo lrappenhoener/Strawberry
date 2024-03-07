@@ -105,6 +105,17 @@ public class ResolveTests {
     assertFalse(resolvable);
   }
 
+  @Test
+  void can_be_resolved_returns_true_when_registered_type() {
+    ContainerBuilder builder = ContainerBuilder.create();
+    builder.register(SimpleTestType.class);
+    Container container = builder.build();
+
+    boolean resolvable = container.canResolve(SimpleTestType.class);
+
+    assertTrue(resolvable);
+  }
+
   private static ContainerBuilder getContainerBuilder() {
     ContainerBuilder builder = ContainerBuilder.create();
     builder.register(TestTypeWithDependencies.class);
