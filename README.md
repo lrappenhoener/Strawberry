@@ -1,5 +1,5 @@
 # Introduction 
-The **Strawberry Dependency Injection Container (DI Container)** is a lightweight, yet powerful, Java dependency injection
+The **Strawberry Dependency Injection Container** is a lightweight, yet powerful, Java dependency injection
  framework designed for personal use and learning purposes. It aims to provide a simple yet effective way to manage
  dependencies in Java applications, making it easier to develop, test, and maintain software.
 Strawberry is not intended for production environments, as it may lack the robustness and features of more established
